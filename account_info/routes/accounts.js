@@ -1,6 +1,6 @@
 const  { Router } =require("express")
 const {defLogger } =require('../logger.js' )
-const {getAllAccounts,getAccountByAccountNumber,getAccountByHolderId,updateAccountBalance,createAccount,deleteAccount} =require("../database.js")
+const {getAllAccounts,addTransaction,getAllTransactions,getAccountByAccountNumber,updateAccountBalance,createAccount,deleteAccount} =require("../database.js")
 // const bodyParser= require("body-parser")
 const {sendMessage}=require('../rabbitmqConn.js')
 const router=Router()
@@ -14,6 +14,15 @@ router.get('/',(req,res)=>{
     }).catch((err)=>{
         logger.error(err.message);
         res.status(400).send('fail to get accounts') 
+    })
+})
+
+router.get('/transactions',(req,res)=>{    
+    getAllTransactions().then((result)=>{
+        res.status(200).json(result) 
+    }).catch((err)=>{
+        logger.error(err.message);
+        res.status(400).send('fail to get transactions') 
     })
 })
 
@@ -181,22 +190,16 @@ router.route("/money_transfer").post(async(req,res)=>{
         logger.error("Faied transfer amount to debit account due to database issue");
         try{
             await updateAccountBalance(credit_account_amount+amount,credit_account_number)
+            await addTransaction(debit_account_number,credit_account_number,amount)
         }catch(err){
             logger.error("Faied transfer revert amount to credit account due to database issue");
+            res.status(500).json({
+                message:"server error"
+            })
+            return
         }
-        res.status(500).json({
-            message:"server error"
-        })
-        return
+        
     }
-    try{
-        await addTransaction(debit_account_number,credit_account_number,amount)
-    }catch(err){
-        logger.error("Faied transfer revert amount to credit account due to database issue");
-    }
-    res.status(500).json({
-        message:"server error"
-    })
     sendMessage(JSON.stringify({
         account_holder_id:credit_account_holder,
         amount
@@ -211,6 +214,54 @@ router.route("/money_transfer").post(async(req,res)=>{
     })
 
 })
+
+router.post("/create_account",(req,res)=>{
+    // account_holder_id,account_holder_name,account_number
+    const {account_holder_id,account_holder_name,account_number}=req.body
+    createAccount(account_holder_id,account_holder_name,account_number).then(()=>{
+            let data={
+                account_holder_id,account_holder_name,account_number,account_balance:0
+            }
+            res.status(201).json({
+                message:"added successfully",
+                customer:data
+            })
+        }).catch((err)=>{
+            logger.error(err.message)
+            res.status(500).json({
+                message:"server error"
+            })
+        })                
+
+})
+
+router.route("/").delete((req,res)=>{
+    getAccountByAccountNumber(req.params.account_number).then((result)=>{
+        if (result==undefined) {
+            logger.error("account does not exist");
+            res.status(400).json({
+                message:"account does not exist"
+            })
+        }else{
+            deleteAccount(req.params.account_number).then(()=>{
+                res.status(200).json({
+                    message:"account deleted successfully"
+                })   
+            }).catch((err)=>{
+                logger.error(err.message);
+                    res.status(500).json({
+                        message:"server error"
+                    }) 
+            })
+        }
+    }).catch((err)=>{
+        logger.error(err.message);
+            res.status(500).json({
+                message:"server error"
+            })
+    })
+})
+
 
 
 

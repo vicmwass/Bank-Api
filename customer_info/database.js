@@ -136,10 +136,10 @@ const readRefreshToken=(refresh_token)=>{
         })
     })    
 }
-const createUserTokenEntry=(username)=>{
-    const sql="INSERT INTO AUTHTOKENS (username) VALUES (?)"
+const createUserTokenEntry=(refresh_token)=>{
+    const sql="INSERT INTO AUTHTOKENS (refresh_token) VALUES (?)"
     return new Promise((resolve, reject) => {
-        db.run(sql,[username],(err)=>{
+        db.run(sql,[refresh_token],(err)=>{
             if(err){
                 reject(err)
             }else{

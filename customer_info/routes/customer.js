@@ -130,6 +130,8 @@ router.post("/",(req,res)=>{
                 username,
                 email
             }
+
+            //should stage to queue to create account
             sendMessage(JSON.stringify({
                 customer_id:result.id,
                 customer_username:username,

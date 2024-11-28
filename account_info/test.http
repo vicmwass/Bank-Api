@@ -1,0 +1,42 @@
+GET http://localhost:3002/accounts/
+
+
+###
+GET http://localhost:3002/accounts/transactions
+###
+POST http://localhost:3002/accounts/create_account
+Content-Type: application/json
+
+{
+	"account_holder_id":"5",
+	"account_holder_name": "mwass1",
+    "account_number":"1100993350"
+}
+
+###
+POST http://localhost:3002/accounts/add_amount
+Content-Type: application/json
+
+{
+	"account_number":"1100993350",
+	"amount":1198
+}
+
+###
+POST http://localhost:3002/accounts/withdraw_amount
+Content-Type: application/json
+
+{
+	"account_number":"1100993350",
+	"amount":23
+}
+
+###
+POST http://localhost:3002/accounts/money_transfer
+Content-Type: application/json
+
+{
+	"credit_account_number":"1100993350",
+	"debit_account_number":"1100993349",
+	"amount":120
+}

@@ -49,11 +49,12 @@ function generateAccountNumber(){
 }
 
 function sendMessage(message,routingKey){
+    if(channel){
   channel.publish(exchange, routingKey, Buffer.from(message), {
     persistent: true,
     // messageId,
     // mandatory: true,
-  });
+  });}
 }
 
 async function startMQConnection(){
