@@ -14,8 +14,8 @@ async function startUp(){
   app.listen(PORT,() => {
     logger.info('Server started listening at port '+PORT)
   })
-//   await startMQConnection()
-//   rabbitmqListen('message-customer')
+  await startMQConnection()
+  rabbitmqListen('message-customer')
 
 }
 
