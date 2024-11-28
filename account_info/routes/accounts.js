@@ -190,7 +190,7 @@ router.route("/money_transfer").post(async(req,res)=>{
         logger.error("Faied transfer amount to debit account due to database issue");
         try{
             await updateAccountBalance(credit_account_amount+amount,credit_account_number)
-            await addTransaction(debit_account_number,credit_account_number,amount)
+            
         }catch(err){
             logger.error("Faied transfer revert amount to credit account due to database issue");
             res.status(500).json({
@@ -200,6 +200,7 @@ router.route("/money_transfer").post(async(req,res)=>{
         }
         
     }
+    await addTransaction(debit_account_number,credit_account_number,amount)
     sendMessage(JSON.stringify({
         account_holder_id:credit_account_holder,
         amount
