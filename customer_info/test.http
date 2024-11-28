@@ -1,0 +1,36 @@
+GET http://localhost:3002/customers/
+
+
+###
+GET http://localhost:3002/customers/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im13YXMxdmljIiwiaWQiOjEsImlhdCI6MTczMjU2OTMzNywiZXhwIjoxNzMyNTY5NDA3fQ._1GK8xtfpuFv6z6AGLWpLmJm5eq-TGqfuIEEsyI_8hg
+###
+POST http://localhost:3001/customers/
+Content-Type: application/json
+
+{
+	"firstname":"mwas",
+	"lastname": "vic",
+    "username":"mwasvic",
+	"email":"mwasvic@gmail.com",
+	"password":"Kami1234"
+}
+
+###
+POST http://localhost:3002/auth/login
+Content-Type: application/json
+
+{
+  "username": "mwas1vic",
+  "password":"Kami1234"
+
+}
+
+###
+
+POST http://localhost:3002/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im13YXMxdmljIiwiaWQiOjEsImlhdCI6MTczMjU2OTE4NH0.YwVJClHVNJm13hYPOJqijK3jOnOp_XmB5sVZUSSxao8"
+}

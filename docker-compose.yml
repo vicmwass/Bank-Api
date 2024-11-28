@@ -1,0 +1,36 @@
+services:
+  customer.api:
+    build:
+      context: ./customer_info     
+    container_name: customer.api
+    networks:
+      - simple-api
+    depends_on:
+      - rabbitmq
+    ports:
+      - "3002:3002"
+  account.api:
+    build:
+      context: ./account_info
+    container_name: account.api
+    networks:
+      - simple-api
+    depends_on:
+      - rabbitmq
+    ports: 
+      - "3001:3001"
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    container_name: simple-api.rabbit
+    networks:
+      - simple-api
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+networks:
+  simple-api:
+    external: true
